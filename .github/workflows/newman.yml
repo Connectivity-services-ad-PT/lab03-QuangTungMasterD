@@ -29,7 +29,7 @@ jobs:
         run: nohup npx prism mock contracts/notification.openapi.yaml --port 4010 > prism.log 2>&1 &
 
       - name: Wait for mock server
-        run: npx wait-on http://localhost:4010/health --timeout 30000
+        run: npx wait-on tcp:4010 --timeout 60000
 
       - name: Run Newman tests on mock environment
         run: npx newman run postman/collections/notification.postman_collection.json -e postman/environments/notification_mock.postman_environment.json -r cli,junit --reporter-junit-export reports/newman-report.xml
