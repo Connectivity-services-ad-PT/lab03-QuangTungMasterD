@@ -1,0 +1,14 @@
+{
+  "eventType": "alert.created",
+  "occurredAt": "2026-05-20T08:30:00Z",
+  "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+  "traceId": "770e8400-e29b-41d4-a716-446655440002",
+  "source": "core-business",
+  "data": {
+    "alertId": "880e8400-e29b-41d4-a716-446655440003",
+    "severity": "HIGH",
+    "userId": "user-123",
+    "title": "Thiếu eventId",
+    "message": "Test missing eventId"
+  }
+}

@@ -1,4 +1,4 @@
-name: Newman Contract Tests
+name: Lab 03 - Notification Service Contract Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  newman:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,29 +22,28 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Lint OpenAPI contracts
-        run: npm run lint:contracts
+      - name: Lint OpenAPI contract
+        run: npx @stoplight/spectral-cli lint contracts/notification.openapi.yaml
 
-      - name: Start Prism mock servers
-        run: |
-          nohup npm run mock:iot > prism-iot.log 2>&1 &
-          nohup npm run mock:vision > prism-vision.log 2>&1 &
+      - name: Start Prism mock server
+        run: nohup npx prism mock contracts/notification.openapi.yaml --port 4010 > prism.log 2>&1 &
 
-      - name: Wait for mock servers
-        run: npx wait-on http://localhost:4010/health http://localhost:4011/health --timeout 30000
+      - name: Wait for mock server
+        run: npx wait-on http://localhost:4010/health --timeout 30000
 
-      - name: Run Newman contract tests
-        run: npm run test:mock
+      - name: Run Newman tests on mock environment
+        run: npx newman run postman/collections/notification.postman_collection.json -e postman/environments/notification_mock.postman_environment.json -r cli,junit --reporter-junit-export reports/newman-report.xml
 
-      - name: Show Prism logs on failure
+      - name: Run Jest queue contract tests
+        run: npx jest test/queue-contract.test.js --coverage
+
+      - name: Show Prism log on failure
         if: failure()
-        run: |
-          cat prism-iot.log || true
-          cat prism-vision.log || true
+        run: cat prism.log || true
 
-      - name: Upload Newman reports
+      - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: newman-reports
+          name: test-reports
           path: reports/

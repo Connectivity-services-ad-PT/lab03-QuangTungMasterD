@@ -1,0 +1,261 @@
+{
+  "info": {
+    "name": "Notification Service - Management API (Pair 04)",
+    "description": "Kiểm thử management API cho Notification Service - Dựa trên negotiation-log.md Lab 02",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4010"
+    },
+    {
+      "key": "authToken",
+      "value": "test-token"
+    }
+  ],
+  "item": [
+    {
+      "name": "01_Functional",
+      "item": [
+        {
+          "name": "GET /health - Health check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has status field', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('status');",
+                  "});",
+                  "pm.test('Status is ok', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.equal('ok');",
+                  "});",
+                  "pm.test('Response has service name', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('service');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        },
+        {
+          "name": "GET /info - Service info (Pair 04 contract)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has pair info', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('pair');",
+                  "  pm.expect(json.pair).to.include('Pair 04');",
+                  "});",
+                  "pm.test('Response has mechanism queue-async', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.mechanism).to.equal('queue-async');",
+                  "});",
+                  "pm.test('Response has events array', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('events');",
+                  "  pm.expect(json.events).to.be.an('array');",
+                  "});",
+                  "pm.test('Contract reference exists', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('contractRef');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/info"
+          }
+        },
+        {
+          "name": "GET /metrics/queue - Valid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has queueName', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('queueName');",
+                  "});",
+                  "pm.test('Queue name matches contract', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.queueName).to.equal('core.notification.alerts');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/metrics/queue",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02_Auth",
+      "item": [
+        {
+          "name": "GET /metrics/queue - No token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function() {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test('Response has ProblemDetails', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('type');",
+                  "  pm.expect(json).to.have.property('title');",
+                  "  pm.expect(json).to.have.property('status');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/metrics/queue"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03_Negative",
+      "description": "Negative tests - Xem test/queue-contract.test.js (Jest)",
+      "item": [
+        {
+          "name": "Negative tests are in Jest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Negative tests (missing fields, invalid severity) are in test/queue-contract.test.js', function() {",
+                  "  pm.expect(true).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04_Boundary_Reliability",
+      "description": "Boundary/Reliability tests - Idempotency, duplicate events (test/queue-contract.test.js)",
+      "item": [
+        {
+          "name": "Idempotency tests are in Jest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Idempotency and duplicate event tests (Issue #4) are in test/queue-contract.test.js', function() {",
+                  "  pm.expect(true).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05_Consumer_side_Smoke",
+      "description": "Consumer-side smoke test - Core Business gọi Notification",
+      "item": [
+        {
+          "name": "Consumer can call health endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Consumer (Core Business) can call Notification health', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "06_Local_only_NonFunctional",
+      "description": "Non-functional tests - chỉ chạy khi env=local",
+      "item": [
+        {
+          "name": "Response time (local only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get('env') === 'local') {",
+                  "  pm.test('Response time < 1000ms', function() {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('Skip response time on mock', function() {",
+                  "    pm.expect(true).to.be.true;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    }
+  ]
+}

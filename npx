@@ -1,0 +1,62 @@
+newman
+
+Notification Service - Management API (Pair 04)
+
+❏ 01_Functional
+↳ GET /health - Health check
+  GET http://localhost:4010/health [200 OK, 396B, 103ms]
+  ✓  Status code is 200
+  ✓  Response has status field
+  ✓  Status is ok
+  ✓  Response has service name
+
+↳ GET /info - Service info (Pair 04 contract)
+  GET http://localhost:4010/info [200 OK, 598B, 15ms]
+  ✓  Status code is 200
+  ✓  Response has pair info
+  ✓  Response has mechanism queue-async
+  ✓  Response has events array (alert.created, alert.escalated, alert.resolved)
+  ✓  Contract reference exists
+
+❏ 02_Auth
+↳ GET /metrics/queue - Valid token (200)
+  GET http://localhost:4010/metrics/queue [200 OK, 369B, 18ms]
+  ✓  Status code is 200
+  ✓  Response has queueName
+  ✓  Queue name matches contract
+
+↳ GET /metrics/queue - No token (401)
+  GET http://localhost:4010/metrics/queue [401 Unauthorized, 565B, 31ms]
+  ✓  Status code is 401
+  ✓  Response has ProblemDetails structure
+
+↳ GET /metrics/queue - Invalid token (401)
+  GET http://localhost:4010/metrics/queue [200 OK, 369B, 13ms]
+  1. Status code is 401
+
+┌─────────────────────────┬───────────────────┬───────────────────┐
+│                         │          executed │            failed │
+├─────────────────────────┼───────────────────┼───────────────────┤
+│              iterations │                 1 │                 0 │
+├─────────────────────────┼───────────────────┼───────────────────┤
+│                requests │                 5 │                 0 │
+├─────────────────────────┼───────────────────┼───────────────────┤
+│            test-scripts │                 5 │                 0 │
+├─────────────────────────┼───────────────────┼───────────────────┤
+│      prerequest-scripts │                 0 │                 0 │
+├─────────────────────────┼───────────────────┼───────────────────┤
+│              assertions │                15 │                 1 │
+├─────────────────────────┴───────────────────┴───────────────────┤
+│ total run duration: 353ms                                       │
+├─────────────────────────────────────────────────────────────────┤
+│ total data received: 692B (approx)                              │
+├─────────────────────────────────────────────────────────────────┤
+│ average response time: 36ms [min: 13ms, max: 103ms, s.d.: 34ms] │
+└─────────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                      [39m
+[90m    [39m[90m                [39m[90m                                                             [39m
+ 1.  AssertionError  Status code is 401                                          
+                     expected response to have status code 401 but got 200       
+                     at assertion:0 in test-script                               
+                     inside "02_Auth / GET /metrics/queue - Invalid token (401)" 

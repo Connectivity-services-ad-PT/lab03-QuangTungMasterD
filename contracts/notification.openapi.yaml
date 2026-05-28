@@ -1,0 +1,167 @@
+openapi: 3.1.0
+info:
+  title: Smart Campus - Notification Service (Pair 04 - Core Business → Notification)
+  version: 1.0.0
+  description: |
+    Management API cho Notification Service - Pair 04 Queue async.
+    Service nhận event từ queue core.notification.alerts và gửi notification qua Telegram/Email.
+    Hợp đồng queue async chi tiết: negotiation-log.md, event-contract-template.md
+  contact:
+    name: Notification Service Team - Product B
+    email: notification@campus.edu.vn
+
+servers:
+  - url: http://localhost:4010
+    description: Prism mock server
+  - url: https://notification.campus.local
+    description: Production server
+
+tags:
+  - name: Management
+    description: API quản lý service (health, metrics, info)
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Kiểm tra trạng thái service
+      description: Endpoint health check cho Docker/Kubernetes. Trả về trạng thái service.
+      tags: [Management]
+      security: []
+      responses:
+        '200':
+          description: Service đang hoạt động
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service, version, timestamp]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                    example: ok
+                  service:
+                    type: string
+                    example: notification-service
+                  version:
+                    type: string
+                    example: 1.0.0
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: '2026-05-27T10:00:00Z'
+
+  /info:
+    get:
+      operationId: getServiceInfo
+      summary: Lấy thông tin service và contract
+      description: Trả về thông tin chi tiết về service, cặp đàm phán, topic, events và tham chiếu contract.
+      tags: [Management]
+      security: []
+      responses:
+        '200':
+          description: Thông tin service
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: notification-service
+                  version:
+                    type: string
+                    example: 1.0.0
+                  pair:
+                    type: string
+                    example: "Pair 04 - Core Business → Notification"
+                  role:
+                    type: string
+                    enum: [Provider]
+                    example: Provider
+                  mechanism:
+                    type: string
+                    enum: [queue-async]
+                    example: queue-async
+                  topic:
+                    type: string
+                    example: core.notification.alerts
+                  events:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - alert.created
+                      - alert.escalated
+                      - alert.resolved
+                  contractRef:
+                    type: string
+                    example: "negotiation-log.md, event-contract-template.md"
+
+  /metrics/queue:
+    get:
+      operationId: getQueueMetrics
+      summary: Lấy thông tin queue (giám sát)
+      description: Trả về số lượng message đang chờ trong queue và số consumer đang chạy. Dùng để giám sát health của queue.
+      tags: [Management]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Queue metrics thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  queueName:
+                    type: string
+                    example: core.notification.alerts
+                  messageCount:
+                    type: integer
+                    description: Số message đang chờ
+                    example: 0
+                  consumerCount:
+                    type: integer
+                    description: Số consumer đang chạy
+                    example: 1
+        '401':
+          description: Thiếu token xác thực
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                type: https://campus.local/errors/unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Missing or invalid authentication token
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://campus.local/errors/unauthorized
+        title:
+          type: string
+          example: Unauthorized
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+          example: 401
+        detail:
+          type: string
+          example: Missing authentication token

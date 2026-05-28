@@ -1,0 +1,15 @@
+{
+  "eventId": "890e8400-e29b-41d4-a716-446655440004",
+  "eventType": "alert.created",
+  "occurredAt": "2026-05-20T08:35:00Z",
+  "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+  "traceId": "770e8400-e29b-41d4-a716-446655440002",
+  "source": "core-business",
+  "data": {
+    "alertId": "890e8400-e29b-41d4-a716-446655440005",
+    "severity": "HIGH",
+    "userId": "user-123",
+    "title": "Cảnh báo nhiệt độ cao",
+    "message": "Phòng server - nhiệt độ 85°C"
+  }
+}

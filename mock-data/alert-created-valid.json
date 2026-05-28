@@ -1,0 +1,15 @@
+{
+  "eventId": "550e8400-e29b-41d4-a716-446655440000",
+  "eventType": "alert.created",
+  "occurredAt": "2026-05-20T08:30:00Z",
+  "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+  "traceId": "770e8400-e29b-41d4-a716-446655440002",
+  "source": "core-business",
+  "data": {
+    "alertId": "880e8400-e29b-41d4-a716-446655440003",
+    "severity": "CRITICAL",
+    "userId": "user-123",
+    "title": "Phát hiện truy cập trái phép",
+    "message": "Cửa chính - 20/05/2026 08:30"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "eventId": "910e8400-e29b-41d4-a716-446655440008",
+  "eventType": "alert.escalated",
+  "occurredAt": "2026-05-20T08:45:00Z",
+  "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+  "traceId": "770e8400-e29b-41d4-a716-446655440002",
+  "source": "core-business",
+  "data": {
+    "alertId": "880e8400-e29b-41d4-a716-446655440003",
+    "previousSeverity": "MEDIUM",
+    "newSeverity": "HIGH",
+    "reason": "Chưa xử lý sau 5 phút"
+  }
+}

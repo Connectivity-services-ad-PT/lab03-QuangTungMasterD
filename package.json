@@ -1,23 +1,20 @@
 {
-  "name": "fit4110_lab03_postman_mock_testing",
-  "version": "0.3.0",
-  "private": true,
-  "description": "FIT4110 Lab 03 - Postman, Mock Server, Contract Testing, Newman CI",
+  "name": "lab03-pair04-notification",
+  "version": "1.0.0",
+  "description": "Lab 03 - Notification Service (Pair 04 - Queue Async) dựa trên negotiation-log.md",
   "scripts": {
-    "mock:iot": "prism mock contracts/iot-ingestion.openapi.yaml -p 4010 --host 0.0.0.0",
-    "mock:vision": "prism mock contracts/ai-vision.openapi.yaml -p 4011 --host 0.0.0.0",
-    "mock:all": "sh -c 'npm run mock:iot & npm run mock:vision & wait'",
-    "lint:contracts": "spectral lint contracts/*.yaml --fail-severity error",
-    "test:mock": "newman run postman/collections/FIT4110_lab03_iot_ingestion.postman_collection.json -e postman/environments/FIT4110_lab03_mock.postman_environment.json --reporters cli,junit --reporter-junit-export reports/newman-report-mock.xml",
-    "test:local": "newman run postman/collections/FIT4110_lab03_iot_ingestion.postman_collection.json -e postman/environments/FIT4110_lab03_local.postman_environment.json --reporters cli,junit --reporter-junit-export reports/newman-report-local.xml",
-    "test:html": "newman run postman/collections/FIT4110_lab03_iot_ingestion.postman_collection.json -e postman/environments/FIT4110_lab03_mock.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export reports/newman-report.html",
-    "test:ci": "npm run lint:contracts && npm run test:mock"
+    "lint": "npx @stoplight/spectral-cli lint contracts/*.yaml",
+    "mock": "npx prism mock contracts/notification.openapi.yaml --port 4010",
+    "test:mock": "npx newman run postman/collections/notification.postman_collection.json -e postman/environments/notification_mock.postman_environment.json -r cli,junit --reporter-junit-export reports/newman-report-mock.xml",
+    "test:local": "npx newman run postman/collections/notification.postman_collection.json -e postman/environments/notification_local.postman_environment.json -r cli,junit --reporter-junit-export reports/newman-report-local.xml",
+    "test:queue": "npx jest test/queue-contract.test.js --coverage",
+    "test:all": "npm run test:queue && npm run test:mock",
+    "html:test": "npx newman run postman/collections/notification.postman_collection.json -e postman/environments/notification_mock.postman_environment.json -r htmlextra --reporter-htmlextra-export reports/newman-report.html"
   },
   "devDependencies": {
-    "@stoplight/prism-cli": "^5.14.2",
-    "@stoplight/spectral-cli": "^6.15.0",
-    "newman": "^6.2.1",
-    "newman-reporter-htmlextra": "^1.23.1",
-    "wait-on": "^7.2.0"
+    "@stoplight/prism-cli": "^5.8.0",
+    "@stoplight/spectral-cli": "^6.11.0",
+    "jest": "^29.7.0",
+    "newman": "^6.1.0"
   }
 }
